@@ -7,19 +7,36 @@ import {google} from 'googleapis';
 const TEST_SHEET = '18zMmVFakNS_FAWSegEKB9UypHKpCnC8fmiPYMgXuN3Y'
 const HEADER_RANGE = 'Sheet1!A2:D2';
 const DATA_RANGE = 'Sheet1!A4:C100';
+
 const app = express();
 app.use(cors({origin: true}));
+
 const sheets = google.sheets({
   version: 'v4',
   auth: SHEETS_KEY,
 });
 
+// const drive = google.drive({
+//   version: 'v3',
+//   auth: SHEETS_KEY,
+// });
+
+// drive.files.copy({fileId: TEST_SHEET}).then(response => {
+//   response.data
+// })
+
+// sheets.spreadsheets.batchUpdate({requestBody:{requests: [{duplicateSheet: {sourceSheetId: }}]}})
+
 app.get('*', (req: express.Request, res: express.Response) => {
-  sheets.spreadsheets.get({
-    spreadsheetId: TEST_SHEET,
-    ranges: [HEADER_RANGE, DATA_RANGE]
+  sheets.spreadsheets.values.batchGet({
+    spreadsheetId: TEST_SHEET, ranges: [HEADER_RANGE, DATA_RANGE]
   }).then(result => {
-    res.send(result.data);
+    if (result.data.valueRanges?.[0]?.values && result.data.valueRanges?.[1]?.values) {
+      const header_values = result.data.valueRanges[0].values;
+      const data_values = result.data.valueRanges[1].values;
+      res.send({header_values, data_values});
+    }
+    res.send("Failed to fetch values for expected ranges");
   }).catch(error => {
     res.send(error);
   })
