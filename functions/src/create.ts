@@ -44,7 +44,7 @@ app.use(cookieParser());
 app.use(validateFirebaseIdToken);
 
 app.post('*', (req: Request, res: express.Response) => {
-  res.send({user: req.user!.name, sheet: "1234", menu: "567"});
+  res.send({data: {user: req.user!.name, sheet: "1234", menu: "567"}});
 });
 
 export const createMenu = functions.https.onRequest(app);
