@@ -10,7 +10,7 @@ interface Request extends express.Request {
 
 const validateFirebaseIdToken = async (req: Request, res: express.Response, next: any) => {
   if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
-      !(req.cookies && req.cookies.__session)) {
+    !(req.cookies && req.cookies.__session)) {
     console.error('No Firebase ID token was passed as a Bearer token in the Authorization header.');
     res.status(403).send('Unauthorized');
     return;
@@ -19,7 +19,7 @@ const validateFirebaseIdToken = async (req: Request, res: express.Response, next
   let idToken;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
     idToken = req.headers.authorization.split('Bearer ')[1];
-  } else if(req.cookies) {
+  } else if (req.cookies) {
     idToken = req.cookies.__session;
   } else {
     res.status(403).send('Unauthorized');
@@ -44,10 +44,7 @@ app.use(cookieParser());
 app.use(validateFirebaseIdToken);
 
 app.post('*', (req: Request, res: express.Response) => {
-  res.send(`Hello ${req.user!.name}`);
+  res.send({user: req.user!.name, sheet: "1234", menu: "567"});
 });
 
-// This HTTPS endpoint can only be accessed by your Firebase Users.
-// Requests need to be authorized by providing an `Authorization` HTTP header
-// with value `Bearer <Firebase ID Token>`.
 export const createMenu = functions.https.onRequest(app);
