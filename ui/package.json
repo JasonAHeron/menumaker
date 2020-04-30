@@ -10,10 +10,12 @@
   "dependencies": {
     "core-js": "^3.6.4",
     "firebase": "^7.14.2",
+    "tailwindcss": "^1.4.1",
     "vue": "^2.6.11",
     "vuefire": "^2.2.2"
   },
   "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^2.1.2",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-eslint": "~4.3.0",
     "@vue/cli-service": "~4.3.0",

@@ -10,7 +10,6 @@ const DATA_RANGE = 'Sheet1!A4:C100';
 
 const app = express();
 app.use(cors({origin: true}));
-app.use(express.static(__dirname + '/public'))
 app.set('views', __dirname + '/views');
 app.engine('handlebars', handlebars({
   layoutsDir: __dirname + '/views/layouts',
