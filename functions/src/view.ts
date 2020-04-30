@@ -20,6 +20,8 @@ app.set('view engine', 'handlebars');
 app.use(authenticateSheets);
 
 app.get('*', (req: Request, res: express.Response) => {
+  const menuId = req.path;
+  console.log("found menu", menuId);
   req.sheets!.spreadsheets.values.batchGet({
     spreadsheetId: TEST_SHEET, ranges: [HEADER_RANGE, DATA_RANGE]
   }).then(result => {
