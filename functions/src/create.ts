@@ -42,6 +42,7 @@ app.use(cookieParser());
 app.use(validateFirebaseIdToken);
 app.use(authenticateDrive);
 const db = admin.firestore()
+const shortid = require('shortid');
 
 app.post('*', (req: Request, res: express.Response) => {
   if(!!req.user?.email) {
@@ -54,33 +55,31 @@ app.post('*', (req: Request, res: express.Response) => {
               fileId: response.data.id,
               requestBody: { type: 'user', role: 'writer', emailAddress: req.user!.email }
             }).then(() => {
-              const userMenuId = response.data.id!.substring(0, 6)
+              const userMenuId = shortid.generate();
               const p1 = db.collection('menuIds').doc(userMenuId).set({ spreadsheetId: response.data.id });
               const p2 = db.collection('users').doc(req.user!.email!).set({ menuId: userMenuId, spreadsheetId: response.data.id });
               Promise.all([p1, p2])
-              .then(() => {
-                res.send({ data: { sheet: response.data.id, menu: userMenuId }});
-                return;
-              })
+              .then(() => res.send({ data: { sheet: response.data.id, menu: userMenuId }}))
               .catch(err => console.error(err));
             }).catch(err => console.error(err));
+          } else {
+            return;
           }
         })
         .catch(error => {
           console.error(error);
           res.status(500).send(error);
-          return;
         });
       } else {
         res.send({data: {sheet: doc.get('spreadsheetId'), menu: doc.get('menuId')}});
-        return;
       }
     })
     .catch(err => {
       console.log('Error getting document', err);
     })
-  }
+  } else {
   res.status(500).send();
+  }
 });
 
 export const createMenu = functions.https.onRequest(app);
