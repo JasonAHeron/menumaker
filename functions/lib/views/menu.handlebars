@@ -1,1 +1,8 @@
-<h1>Example App: Home</h1>
+<div class="max-w-sm rounded overflow-hidden shadow-lg">
+  <div class="px-6 py-4">
+    {{log 'headerValues' headerValues}}
+    {{#each headerValues}}
+    <div class="font-bold text-xl mb-2">{{this}}</div>
+    {{/each}}
+  </div>
+</div>

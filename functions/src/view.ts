@@ -24,10 +24,11 @@ app.get('*', (req: Request, res: express.Response) => {
     spreadsheetId: TEST_SHEET, ranges: [HEADER_RANGE, DATA_RANGE]
   }).then(result => {
     if (result.data.valueRanges?.[0]?.values && result.data.valueRanges?.[1]?.values) {
-      //const header_values = result.data.valueRanges[0].values;
-      //const data_values = result.data.valueRanges[1].values;
-      //res.send({header_values, data_values});
-      res.render('menu');
+      const headerValues = result.data.valueRanges[0].values[0];
+      console.log(headerValues);
+      //const dataValues = result.data.valueRanges[1].values;
+      //res.send({headerValues, dataValues});
+      res.render('menu', {headerValues});
       return;
     }
     res.send("Failed to fetch values for expected ranges");
