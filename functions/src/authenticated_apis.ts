@@ -32,7 +32,7 @@ export async function authenticateDrive(req: Request, res: express.Response, nex
  * Middleware to provide an authenticated sheets client.
  */
 export async function authenticateSheets(req: Request, res: express.Response, next: any) {
-  const auth = await getAuthClient(['https://www.googleapis.com/auth/sheets']);
+  const auth = await getAuthClient(['https://www.googleapis.com/auth/spreadsheets.readonly']);
   req.sheets =  google.sheets({
     version: 'v4',
     auth,
