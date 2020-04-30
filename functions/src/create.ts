@@ -3,8 +3,8 @@ import * as admin from 'firebase-admin';
 import * as express from 'express'
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors'
-import {TEST_SHEET, DRIVE_AUTH_SECRET} from './keys';
-import {google, drive_v3} from 'googleapis';
+import { TEST_SHEET, DRIVE_AUTH_SECRET } from './keys';
+import { google, drive_v3 } from 'googleapis';
 
 interface Request extends express.Request {
   user?: admin.auth.DecodedIdToken;
@@ -48,9 +48,9 @@ const validateFirebaseIdToken = async (req: Request, res: express.Response, next
 function getAuthenticateDrive(): Promise<drive_v3.Drive> {
   return google.auth.getClient({
     credentials: DRIVE_AUTH_SECRET,
-    scopes: ['https://www.googleapis.com/auth/drive.file','https://www.googleapis.com/auth/drive',],
+    scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive',],
   }).then(validAuth =>
-     google.drive({
+    google.drive({
       version: 'v3',
       auth: validAuth,
     })
@@ -59,44 +59,31 @@ function getAuthenticateDrive(): Promise<drive_v3.Drive> {
 
 admin.initializeApp();
 const app = express();
-app.use(cors({origin: true}));
+app.use(cors({ origin: true }));
 app.use(cookieParser());
 app.use(validateFirebaseIdToken);
 app.use(authenticateDrive);
 
 app.post('*', (req: Request, res: express.Response) => {
-  req.drive!.files.copy({fileId: TEST_SHEET}).then(response => {
-    if (response.data?.id !== null) {    
+  req.drive!.files.copy({ fileId: TEST_SHEET }).then(response => {
+    if (!!response.data?.id) {
       req.drive!.permissions.create({
-          fileId: response.data.id,
-          fields: 'id',
-          requestBody:{type: 'user', role: 'writer', emailAddress: req.user!.email}
-        }).then(resp => {
-          if (response.data.id !== null && response.data.id !== undefined) {
-            const userMenuId = response.data.id?.substring(0,6)
-            admin.firestore().collection('menuIds').doc(userMenuId).set({spreadsheetId: response.data.id}).then(() => {
-              console.log('added menuId');
-              admin.firestore().collection('users').doc(req.user!.name).set({menuId: userMenuId, spreadsheetId: response.data.id}).then(() => {
-                console.log('added user data');
-                res.send({data: {sheet: response.data.id, menu: userMenuId}});
-              }).catch(err => {
-                console.error(err);
-              })
-            }).catch(err => { 
-              console.error(err);
-            });
-          }
-          //res.send(resp);
-        }).catch(err => {
-          console.error(err);
-        })
-      }
+        fileId: response.data.id,
+        requestBody: { type: 'user', role: 'writer', emailAddress: req.user!.email }
+      }).then(() => {
+        const userMenuId = response.data.id!.substring(0, 6)
+        const p1 = admin.firestore().collection('menuIds').doc(userMenuId).set({ spreadsheetId: response.data.id });
+        const p2 = admin.firestore().collection('users').doc(req.user!.name).set({ menuId: userMenuId, spreadsheetId: response.data.id });
+        Promise.all([p1, p2])
+        .then(() => res.send({ data: { sheet: response.data.id, menu: userMenuId } }))
+        .catch(err => console.error(err));
+      }).catch(err => console.error(err));
+    }
   })
   .catch(error => {
     console.error(error);
     res.status(500).send(error);
-  })
-  //res.send({data: {user: req.user!.name, sheet: "1234", menu: "567"}});
+  });
 });
 
 export const createMenu = functions.https.onRequest(app);
