@@ -4,7 +4,8 @@ import * as express from 'express'
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors'
 import { TEST_SHEET } from './keys';
-import {authenticateDrive, Request} from './authenticated_apis';
+import {authenticateDrive, Request, adminSdk} from './authenticated_apis';
+import * as shortid from 'shortid';
 
 const validateFirebaseIdToken = async (req: Request, res: express.Response, next: any) => {
   if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
@@ -35,14 +36,12 @@ const validateFirebaseIdToken = async (req: Request, res: express.Response, next
   }
 };
 
-admin.initializeApp();
 const app = express();
 app.use(cors({ origin: true }));
 app.use(cookieParser());
 app.use(validateFirebaseIdToken);
 app.use(authenticateDrive);
-const db = admin.firestore()
-const shortid = require('shortid');
+const db = adminSdk.firestore()
 
 app.post('*', (req: Request, res: express.Response) => {
   if(!!req.user?.email) {

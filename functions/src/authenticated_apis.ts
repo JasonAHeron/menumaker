@@ -3,10 +3,17 @@ import * as admin from 'firebase-admin';
 import { google, drive_v3, sheets_v4 } from 'googleapis';
 import * as express from 'express'
 
+export const adminSdk = admin.initializeApp();
+
+export interface MenuDocModel {
+  spreadsheetId: string;
+}
+
 export interface Request extends express.Request {
   user?: admin.auth.DecodedIdToken;
   drive?: drive_v3.Drive;
   sheets?: sheets_v4.Sheets;
+  menuDoc?: MenuDocModel;
 }
 
 function getAuthClient(scopes: string[]): Promise<any> {
