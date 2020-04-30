@@ -33,8 +33,10 @@ app.get('*', (req: express.Request, res: express.Response) => {
       //const data_values = result.data.valueRanges[1].values;
       //res.send({header_values, data_values});
       res.render('menu');
+      return;
     }
     res.send("Failed to fetch values for expected ranges");
+    return;
   }).catch(error => {
     res.send(error);
   })
