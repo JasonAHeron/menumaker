@@ -2,9 +2,8 @@ import * as functions from 'firebase-functions';
 import * as express from 'express'
 import * as cors from 'cors'
 import * as handlebars from 'express-handlebars';
-
-import {SHEETS_KEY, TEST_SHEET} from './keys';
-import {google} from 'googleapis';
+import {authenticateSheets, Request} from './authenticated_apis';
+import {TEST_SHEET} from './keys';
 
 const HEADER_RANGE = 'Sheet1!A2:D2';
 const DATA_RANGE = 'Sheet1!A4:C100';
@@ -18,14 +17,10 @@ app.engine('handlebars', handlebars({
   defaultLayout: 'main'
 }));
 app.set('view engine', 'handlebars');
+app.use(authenticateSheets);
 
-const sheets = google.sheets({
-  version: 'v4',
-  auth: SHEETS_KEY,
-});
-
-app.get('*', (req: express.Request, res: express.Response) => {
-  sheets.spreadsheets.values.batchGet({
+app.get('*', (req: Request, res: express.Response) => {
+  req.sheets!.spreadsheets.values.batchGet({
     spreadsheetId: TEST_SHEET, ranges: [HEADER_RANGE, DATA_RANGE]
   }).then(result => {
     if (result.data.valueRanges?.[0]?.values && result.data.valueRanges?.[1]?.values) {

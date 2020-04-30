@@ -3,18 +3,8 @@ import * as admin from 'firebase-admin';
 import * as express from 'express'
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors'
-import { TEST_SHEET, DRIVE_AUTH_SECRET } from './keys';
-import { google, drive_v3 } from 'googleapis';
-
-interface Request extends express.Request {
-  user?: admin.auth.DecodedIdToken;
-  drive?: drive_v3.Drive;
-}
-
-const authenticateDrive = async (req: Request, res: express.Response, next: any) => {
-  req.drive = await getAuthenticateDrive();
-  next();
-}
+import { TEST_SHEET } from './keys';
+import {authenticateDrive, Request} from './authenticated_apis';
 
 const validateFirebaseIdToken = async (req: Request, res: express.Response, next: any) => {
   if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
@@ -44,18 +34,6 @@ const validateFirebaseIdToken = async (req: Request, res: express.Response, next
     return;
   }
 };
-
-function getAuthenticateDrive(): Promise<drive_v3.Drive> {
-  return google.auth.getClient({
-    credentials: DRIVE_AUTH_SECRET,
-    scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive',],
-  }).then(validAuth =>
-    google.drive({
-      version: 'v3',
-      auth: validAuth,
-    })
-  );
-}
 
 admin.initializeApp();
 const app = express();
