@@ -15,6 +15,9 @@
   Create menu
 </button>
     </div>
+    <div v-if="this.user.menuData"> 
+      <a id="hyperlink" href="#">link text</a>
+      </div>
   </div>
 </template>
 
@@ -27,7 +30,8 @@ export default {
     return {
       user: {
         loggedIn: false,
-        data: {}
+        data: {},
+        menuData: null,
       }
     };
   },
@@ -40,7 +44,7 @@ export default {
         return this.user.data.displayName;
       }
       return null;
-    }
+    },
   },
   methods: {
     login() {
@@ -51,7 +55,9 @@ export default {
     },
     createMenu() {
       Firebase.createMenu().then(result => {
-        console.log(result);
+        this.user.menuData = result;
+        var link = document.getElementById("hyperlink");
+        link.href = "https://menu.heron.dev/view" + this.menuData.data.menu
       })
     }
   },
