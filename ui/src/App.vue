@@ -1,11 +1,11 @@
 <template>
   <div class="antialiased" id="app">
     <div class="relative bg-gray-200">
-      <div class="absolute inset-0 flex flex-col" aria-hidden="true">
+      <div class="inset-0 flex flex-col" aria-hidden="true">
         <button
           v-if="authenticated"
           @click="logout"
-          class="absolute self-end m-2 absolute bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+          class="self-end m-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
         >Logout {{ firstName }}</button>
         <div class="flex-1 bg-gray-100"></div>
         <div class="flex-1 bg-teal-200"></div>
@@ -30,17 +30,18 @@
               <span
                 v-if="this.loadingMenu"
                 class="m-2"
-              >Loading... don't you wish I was smart enough to make a spinner</span>
+              >Loading... I wish I was smart enough to make a spinner</span>
             </div>
             <div v-if="!authenticated" class="self-center flex flex-col items-center p-8">
-              <h1 class="m-2">Welcome to MenuMaker!</h1>
+              <h1
+                class="mb-2 self-center font-semibold sm:text-xl md:text-3xl"
+              >Welcome to MenuMaker!</h1>
               <button
                 @click="login"
                 class="m-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
               >Login with Google to get started</button>
             </div>
             <div v-if="this.menuData" class="self-center flex flex-col items-start m-2 md:p-8">
-              <h1>Your menu is ready to go</h1>
               <div class="mb-4 flex flex-col">
                 <span
                   class="block break-words text-gray-700 text-sm font-bold mb-2"
