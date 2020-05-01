@@ -30,7 +30,11 @@
               <span
                 v-if="this.loadingMenu"
                 class="m-2"
-              >Loading... I wish I was smart enough to make a spinner</span>
+              >Loading... I wish I was smart enough to make a spinner. This can take like 20 seconds. It will probably work though.</span>
+              <span
+                v-if="this.errorFromCreate"
+                class="m-2"
+              >Well, I messed something up, maybe try refreshing or clicking create again?</span>
             </div>
             <div v-if="!authenticated" class="self-center flex flex-col items-center p-8">
               <h1
@@ -82,6 +86,7 @@ export default {
   data() {
     return {
       loadingMenu: false,
+      errorFromCreate: false,
       menuData: null,
       user: {
         loggedIn: false,
@@ -132,10 +137,16 @@ export default {
     },
     createMenu() {
       this.loadingMenu = true;
-      Firebase.createMenu().then(result => {
-        this.loadingMenu = false;
-        this.menuData = result.data;
-      });
+      Firebase.createMenu()
+        .then(result => {
+          this.loadingMenu = false;
+          this.errorFromCreate = false;
+          this.menuData = result.data;
+        })
+        .catch(() => {
+          this.loadingMenu = false;
+          this.errorFromCreate = true;
+        });
     }
   },
   mounted: function() {
