@@ -2,12 +2,18 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
     <div v-if="!authenticated">
-      <button @click="login">Login</button>
+      <button @click="login" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" >
+  Login
+</button>
     </div>
     <div v-if="authenticated">
-      <button @click="logout">Logout</button>
+      <button @click="logout" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" >
+  Logout
+</button>
       <h1>Hi {{ firstName }}!</h1>
-      <button @click="createMenu">Create a menu!</button>
+      <button @click="createMenu" class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" >
+  Create menu
+</button>
     </div>
   </div>
 </template>
