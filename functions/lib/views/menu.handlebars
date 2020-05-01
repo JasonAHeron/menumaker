@@ -30,21 +30,22 @@
             {{/with}}
           </div>
         </div>
-        <div class="bg-gray-100 border-t-2 border-gray-200">
+        <div class="bg-gray-100 border-t-2 border-gray-300">
           <div class="flex flex-wrap">
             {{#each menu.sections}}
-            <div class="flex flex-col px-12 py-10 w-full sm:border-r sm:border-b border-gray-200">
+            <div class="flex flex-col px-12 py-10 w-full border-b-2 border-r border-l border-gray-300">
               <div class="flex flex-grow">
                 <div class="leading-relaxed flex flex-col ml-4 md:ml-6">
                   <h2 class="font-medium text-gray-800 text-lg">{{this.name}}</h2>
-                  <p class="text-gray-600 mt-1 text-sm md:text-base">Get familiar with Tailwind’s utility-first
-                    approach and start building awesome stuff.</p>
-                  <div class="pt-1 mt-auto">
-                    <a class="inline-flex items-center text-teal-600 hover:text-teal-800"
-                      href="https://tailwindcss.com/docs">
-                      <span class="text-sm md:text-base font-semibold">Explore the docs</span>
-                    </a>
+                  {{#each this.items}}
+                  <div class="m-2">
+                    <div class="flex flex-row">
+                      <h3 class="underline text-gray-800 mt-1 text-md md:text-base">{{this.name}}</h3>
+                      <h3 class="text-gray-800 mt-1 text-md md:text-base ml-2">{{this.price}}</h3>
+                    </div>
+                    <p class="text-gray-800 mt-1 text-sm md:text-base">{{this.description}}</p>
                   </div>
+                  {{/each}}
                 </div>
               </div>
             </div>
