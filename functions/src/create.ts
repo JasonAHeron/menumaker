@@ -52,11 +52,17 @@ app.post('*', (req: Request, res: express.Response) => {
           if (!!response.data?.id) {
             req.drive!.permissions.create({
               fileId: response.data.id,
+              emailMessage: 'Welcome to menumaker! Here is your menu template.',
               requestBody: { type: 'user', role: 'writer', emailAddress: req.user!.email }
             }).then(() => {
               const userMenuId = shortid.generate();
+              // const sheetsRequest = {
+              //   spreadsheetId: response.data.id,
+              //   range: 
+              // }
               const p1 = db.collection('menuIds').doc(userMenuId).set({ spreadsheetId: response.data.id });
               const p2 = db.collection('users').doc(req.user!.email!).set({ menuId: userMenuId, spreadsheetId: response.data.id });
+              //const p3 = req.sheets!.spreadsheets.batchUpdate
               Promise.all([p1, p2])
               .then(() => res.send({ data: { sheet: response.data.id, menu: userMenuId }}))
               .catch(err => console.error(err));
